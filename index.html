@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SRH Cricket Team Fan Page</title>
+  <style>
+    /* Reset and basics */
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #f6f1e7;
+      color: #332a21;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      background: #f04e23; /* SRH Orange */
+      width: 100%;
+      padding: 1.5rem 1rem;
+      color: white;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(240, 78, 35, 0.4);
+    }
+
+    header img {
+      width: 90px;
+      height: auto;
+      margin-bottom: 0.5rem;
+    }
+
+    header h1 {
+      margin: 0.3rem 0 0.1rem;
+      font-size: 2.5rem;
+      letter-spacing: 3px;
+      font-weight: 700;
+    }
+
+    header p {
+      margin: 0;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 1.2rem;
+      letter-spacing: 1.2px;
+    }
+
+    main {
+      max-width: 1000px;
+      width: 90%;
+      padding: 2rem 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .player-card {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 5px 15px rgba(240, 78, 35, 0.25);
+      cursor: pointer;
+      padding: 1.2rem 1rem;
+      text-align: center;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      user-select: none;
+    }
+
+    .player-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 25px rgba(240, 78, 35, 0.5);
+    }
+
+    .player-card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #f04e23;
+      margin-bottom: 0.8rem;
+    }
+
+    .player-card h3 {
+      margin: 0.5rem 0 0.2rem;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #d84315;
+    }
+
+    .player-card p {
+      margin: 0;
+      font-weight: 600;
+      color: #8b4a27;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+    }
+
+    /* Modal Styles */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.65);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      padding: 1rem;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 1rem;
+      max-width: 400px;
+      width: 100%;
+      padding: 2rem 2.5rem;
+      position: relative;
+      box-shadow: 0 15px 40px rgba(240, 78, 35, 0.3);
+      text-align: center;
+      color: #331a0a;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      color: #f04e23;
+      letter-spacing: 1.5px;
+    }
+
+    .modal-content .stat {
+      font-size: 1.1rem;
+      margin: 0.7rem 0;
+      font-weight: 600;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.8rem;
+      background: #f04e23;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      line-height: 35px;
+      transition: background 0.3s ease;
+    }
+
+    .close-btn:hover {
+      background: #b13a1b;
+    }
+
+    @media (max-width: 450px) {
+      header h1 {
+        font-size: 2rem;
+      }
+
+      .modal-content {
+        padding: 1.5rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIALoAugMBEQACEQEDEQH/xAAbAAEAAwEBAQEAAAAAAAAAAAAAAQIEBQYDB//EADwQAAEDAgQDBQUGBQQDAAAAAAEAAgMEEQUSITETQVEGFCJhcSMyM4GRQlKhscHRFVNygvAlNaKyFiQ0/8QAGgEBAAMBAQEAAAAAAAAAAAAAAAECAwQFBv/EADMRAAIBAgMFCAICAQUBAAAAAAABAgMRBBIhMUFRcfAiYYGRobHB0RMy4fEFFCMzQoIV/9oADAMBAAIRAxEAPwDYSvhT7wi6Ei6AXQC6AXQC6AXQC6AXQC6AXQC6AXQC6AXQC6AXQC6AXQC6AXQC6AuNlJUoVBYIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIC42CkqUKgsEAQBAEAQBAEAQBAEAQBAEAQBAEAQBAEAQBAEBcbBSVKFQWCAIAgCAIAgAQAoAgHJAEAQBAEAQBAEAQBAEAQBAXGwUlShUFggCAIAgCABAShBCEhAAgCEBCQgCAIAgCAIAgCAIAgLjYKSpQqCwQBAEBhgxJj8RnoZQI5GOAjP8wFoOnnquqWGkqMasdU/TU51V7bjLTXR8dLm4frZcuw3uWII3BHqEFyEAQEBCSz25Lt8t/ldFsuVTvqLAAWPK5UtWCdwBc6KCWypGqAWQksdbIQfanoqiqa400Rlye81ti76bq8Kc5/qrmc61Om7TdjO4FpIcCCNwRayq007M0TTV0YMSxFlG5kTRxKiQtDY/ugm2Y+S6sPhnVTk/1VzCrWy6R1ftzOguQ6CEAQBAXGwUlShUFggCAIDzeKTxw42W1lM51M5jcz2HW3Jw5hwN17eDTeHWSWt+lyZxtydWUXHR9XZ2IKmsw2ITxv79QuHgq423kjHR4/ULjqUIVZWiss+D2PkybW7MldcOtq9eZrjqGVTBNFIJWu1DwbrilCUHlkrM3hKLXZLqC5B0/NAR5qNpJJuBd5Au27fO3L8CtZRTsZp7lxPvJSiKClqLkQzjxOtex56KJSzSa3oyhVblOO9HyLbOLmG7Mxa1x0zdVKit+00zX037yIywuBcSRysFXI0rss5X0iDa5ttfRVLEICr8rW55CGtZrmOlkSu7INpK7MXearEsxw+zIW6vr5/caOrfvHzXcqEKX/ADbd0Vtf0c7m3ZR0Xr4L5fqcQ1EDcUpoaCOSdglu6Z58U0nU+Q3sOi9CUJqhJzdtNnBcOZnNyjlSje7157uf8HqV4B2gGyAE3QBAXGwUlShUFggCAIDz+Nx1EGJ09TDJdjtBG8XbmtYt15EcvJexgJxnScHt69jlcGq+ZPb11yNdC+AS/wCm1P8AC64/Eo5/hSHyulVSt/uxzx4rauuJdp2s1devXejLi0lTRymc4dJQ1JPikgdeGX1bt+q0pQp1Y5c+dd+1fJWybzJ68fvj4m6mxCqMDXz4ZVXIvnhbnY7zBuuGpg4qTyTRKnKOkld9zXy0a4MSjmApzHJHKPE1s8Zabc7deuizeElDtS2dzuM/avs68jqwYfM5onjYypYLgtY6/wCBsVg3TV020+RnPEK+R9k+cV6ulihZERJA915To3Kdbet1E2oSbvo92/mWb/HUcm9HY+/BJpmUr6/2bCMrBGLAql7tyUNpmpJTzxhqUMAa6lbWlpoohkL4wdOZzdL6XKZ/2a/bb16kqXZk4fs+J8ambvdS8ws9k3SJjBoG338ut1pGNo2e35NKcfxRWZ6vaYqisgpAGvD3zyCzI42lziOZsPzWkMNOo+zu2vYi0qmqVuvgzurqktPAwque62maMNH1utVhFftVI+YdR7Mvm19s41PPU4hUkTUEla5rvDTteRC31tofUlek6VOhDsyy9+8jLvm9fRcuXE6deWgNbjtW02Hs8NozoegNlz0k7v8A08f/AFIccvi3v+zl00dRV43GSwUsMDPgRiwjb09SRr1W+IlClh2m7t+5nODlUjrs3deR6YheEdYQkFAEBcbBSVKFQWCAIAgMeM00tZh0kMRAeRdoLQc3lrt69bLpwlWNKqpSMK8JThaJysOdU1NN3eWnhxFkehie7JPH6c161TJCWeMst9//AFYjJOObN4/a3GTEHRwu4bHYjAOcFUDl/Ra0rvtaPvXX2Xtvf8Prmeq7K1cBoWNLaSmPIMnuXfI7Lyf8hSm531fh9fRhXjKWqNXaqnMuFPqIwDPS+2iI6jcehF1z4CaVXI/1lozCDexdMrTSVLXMdScSnFU0BuZps4EdevNRNQs89nlOh/iqRvLW2p8sWxqjww9yY5xMbb5GNuT6nlfzWuGwlSqs73mMbyea13y6SMkFTidVTGshwqSSm11EgzEDmBz+S3nChTmqcqizGkpZZZXa77/4+To4dXNkjZLE7PDILi/MLnr0Gm01qiHFSV0fSqErP/Uga4wP9qBGwlzr/etuAueLT7beq01ftzL08rf5JPXZqZ+zULZZq3ES0jiSmKLNqWsbpYepuunGScIwo8Fd+JhJtx13+2778TTjtTA2klY80srsvw5Z8l1nhKc3NbV3pF6MXe6uvA8FRTRulLTJVsa4/Aorn5alfQVE7X05v+jq0ez+PM6lQZcOpXvp6NmHMcD7aqdmnePIbj5Lmjlqu0p5u5bF9lbp6t7PJffmaOzlJPS0z31DiXyuzhjgAQOp539ToLea4sfWhOolDcUw8Zayk737jrhtxe4XnnRcgoCEJCAuNgpKlCoLBAEACAkBSQeUxOlhoMRc+rzzsk1DmTWlZ0vcH6r3sLWdWlaOlu7TruOOEo0Z23vfrfxXyaZa2kmpuHHjtXGLfCq4eJb5hI06ilmdJX4p29DoV73svD6a+SnZ6p4OIBkM9I3MfjyRHMfJo81OLp56d5JvuTsJRTTW30Z+gvjzwujk1a5pa7Te4XzWbLO63HAnZ3OBgtRPBiEWE4hK8yUrHcAvdo9nIj5WC9HGQjKn+emtJNX/AJLNU4QaW/r0+jBi9LVR1dTUxVhpqZ7M0rSLhzhoAdRcWXVhqtP8cYuN2thpecHmVrbdVyO72ZqG02DQtqJnytlYH8N4+GCNWjqF53+QpSqYiUoqzW9b+DK4iMp1MyVji9n5WSUXCja5phkczKR7utwPoV6GLi1UvxNk1mlFbmzrYhisuHd27o1stdMx8UcRd1t4j5DdcNDD/mlLPpFWd+W7xOacY1M1K/B9dxtwuj7jQQ02bM5jfG8/acdSfrdYYir+Wo58RJpvQ8n2wqHmcQSS0ssYOns7Sxeq9n/H00oZkmvG6Z10o9nZ8mOhqaamhs7HZ2A/YpactPpcrerCc3f8SfN/Bq4vhfn9WZkENNiNc2KkMzHZrmerlu8nqABqVpKpKjTcp69yRzVZwn2Hq/FJcuLPXsZw4mszOcGi13m5PqvnpO8mzoirKxJ3VC5CAFAQhJcbBSVKFQWCAIAEBYIQfCuw6CujHGZ423DZGmzm+h6LejiKlJ3izGUVfMtHxPPUtVV0Uvd8RqaqFwF2tjibJcX5E8v80XtNU60c9NJ+a9itOo32Z/ty+tpata8AVtKcSu03M07Wxhvp5pSa/SeXktTa7a168z1vZqtbWUI8d3t1cHTGRw/qJ29F42OpOnU7uSXkjlrxtrx63Hx7RMpKuER1MbXFvuuAs5voVbBOpCV4/wBk0aebR6o8fJSta8Q8OR0l7wkXLTbcFuv1C9uE8yzJ8zpVClFpqKVu46hjxaGKRhppXsZla97b5WlwFvz+S5nLDSalda/Bf8tNtXtcwS00rKqSOo4veXmxyPcxhA3J2zLozxcU1a3n/RR0qdSSm17+p6Xs3TUVIS+OO87x4pH6u9B0Xk46dWej/XgYVqbgrRVl3HXxSpZS0Mkr3M2t43loJ6XGxXFhqbqVFGP2YUotyPCU/FrZ5KqT+IGMaB8LhI5vkb6kL6GeWnFRVr+SO29l/XwWq8Qnc4U9HWVr5n+FrDTtY46HmFEacIrPUiklvu2UnUjFd72aHawnDY6OOOWVpdVlvje92Yt8geXyXl4nFSqSsn2SsISfaqay9uR0b8yLrkNUiNtQhJU3JuVBKIUElUJLjYKSpQqCwQBASEBIKEH0jP2eRQpI5ON4ZJaWuonTCrAAAjIId8j+i9DCYq1qU7Ze8wmpRTlB7Tl0z5q294Jqqoj0fJWvLYonDfw+XmvRko07OLsnsyrV9dM0hUhJaP039d3ia8CjxCmnkkgidJSE+OqkIigB5kOdYHpooxFGFWCzae/XIpUrUV2ZPXuO1Hhzq6UDvkLnSFoijhGd0l7+7mygtFtwSNVnToKNo2u34e/9mEseqa7MfN7PI6lLhOH038RkqWQU78IY18maDvEoaWXLsznkXOugGi7lhk08+nckvlM86pi61TLZt5tmtl5KxobHG+qweOinDmYtA+SGSRvBcC0A2IYLG4J3FxY6rKp/jqNTKrJ819WMo1ZRU5P/AKvn7mWfA2YpMypmmHEfK+mhPf4xxMhNw1roxfW/mop4FU4ZKaSV+L/k3p4+dFWWu96fTMsWB1ETpZaUVZZDK6J+emLvE02I8Bcfnayyq4STTvF+51//AElLszSv3P7OT2jZiVZEGQwumpoTaSWjfxcvUPYNRbfUBUwmGjSk+PDf4Lb6G9KtRWjdm+PVjkPz0dP3iSBwDdBX4e/wn+sbX9bLW6qSyX/8yXt0zplJJXl7e3TNWE0E1Y/veIPqi+OS8QkGW45EjfdcmLxCpr8dK1n1yMYXqPV6J6aWO/rzXlt3OhaIE2CgEXQkboCrkJKqCS42CkqUKgsEAQEjZAEIJCA14fTSV0zYIxdxLWtbnyZyQ46uscoAYTcAnkOq9DA4VVnd9czz8biXQWhoo48OjmxDCKGOskr6drw7ulF7Jsl/dJdcvPO7jY7iy92NJbHq14I8mbqNRnJrK+Lu7PrdsPsMRgp4ez+PMpgyN9SaTEO8niyQOJy+87YBw5AaK8YxhaUVz4kOm5OpRv3q2i6sdGEQUtJjEGLUMlayhxPjMc1mZ7WyEPD2/wBJJ0GtmrVtK91s/sxbcnFwdrx9tLeJ8I8WEOM9o3UFZQsFTSx1FNLI9oPGyFtjfUjwDTkoUtri9GWdFuFNST0bT5GSnqm1+J9mMWxSrpoq6kEzasvJbmBaQ3LpaxuD81hTxNKeWWZeZpKm6catOCdna3masFMJiw+Komwiqp45p5JnSyBstOS8kFmuoPWw5LaDTjxRnVUrvRp2SVt/MrE2dvZGjGF0deysxCaWqgkgkzBz/E9rpXH7DhZTa0eyg8rrv8jVlp9270XweKorsBdjE0NDX4riFTxWQufwDFlDY3MbJqbjJ6X/ABjLnj20nzFWShV/HG6jFbdvfdrvMuLYFSYjiOIRxcKSClYxktTLVmI53XvGXNBDrDKfGDbNbnpi6Dv2Ni4668zajiqlKEdbX3JfH1Y5kuGzYVDHC/PkY1rbyAZwNgTbwuGwzNO52F14mMwkoXqeP9Pf6Hq4TFRmlT4aeR8rlefY79LglQSL7+v7qCCAUJIcUBCElxsFJUoVBYIAgJCEEoAhJ9Kafu8wkzOY3TM5g1bY3DgOZB1+o5ldWFrfinrs6/p9xyYqh+aFktetDvSVtfVyUM82P91dFJnqKGjpi4zW921rkscOZ8Njrbl9Kq8Wk5Ss963/AH4nz6pxgnFQvwbezrzRzKjtBBQ4riEcPhFfMKnuvDikbG4Na25e54aHktuQM1tOawniGs0k7Lld+j0OiGFc4xT2pbdnxdo8/XdqKqomqJBQSVEfFayoM875WvdY2u1vs9mnkdGqcspxzZm7+C8tDWNGELLMk927Z367+JgZ2nxGoMpqcRfTyv8AFnjiawN/uYLn5m6zdKMWpRivJfJ6FOjhVBZovxvbzu15iHtDNwQX45XcQ6//AHzC/wDySUKt+7wNVDA2WkfQiPtNiHADGVtVUzH3GzNEoG38wG/yUypRlNKSVu9XMqlPC2vGPjrH6OhRY5i1AymNVQtpqechgfSzGmHibuY82TXkS0DpstJxlTjmV15v01POao1HZSTe/f6+53KfHaWoxDDOO9nEwtxfDBKxoBu0t1lYS0dRmDdVRYlrLJvReD9bFZYWcVOMV+3Wzb5XOzSRxTtjpT3Q09XK+XE6PFBfPexDoz7ptpsbbbELqjUhPReKZyzTV3rdaJr53nMxioZJalp3P7rGA2mjIAEUALS0f3FrTrrYNvzXlf5DEaZI7N3Xsej/AI+g3L8svHvZzgdNNt14h7FhZQSQgBQkhAEBcbBSVKFQWCAIAEIJQklAL6jyQgtFK9jRHmJit8J5JZ9P2W6xNVLKpaGEsPTbzZbM5+LUHfqbLGSyWMHI5vLqPpor4Wt+KezRkV6eePeefo3VlEP9OrHwTAEugtkcy4AOhFjYfaIFtF70MQ1fhx+f41OB0I1YpSSdvB2Xv6GyDG6K7P4xg8b4zJmywU7GhwNjva4PO4drfXRdKqRktdTllhKsHenNrnf40Pq6v7N8ZxbglQ4m7o2iV4PuiwtmItffQpnpcPYhQxmz8y8/4Pp/5LTw0xiwfs9FBMd5HM924OtrAHS/7clLrQitCv8AoalR/wC7Ntcn7uxhxCprsT/3WqErnkuFPFGPaE33yDmOYB3suWeJk3ps47Euu87IYSFBWX2+X9I7OEULaOnub8RwGa5Ow2FtNgbLwsTX/LLuWw9CjTyK+83se+FpEMj2NO7W7fQ6LOGIqQVk9PMtUw9Oo7yiHgh7ruLzmJLyblx635qk5ym80ncvTioxslYqszQIQEBCEhAEBcbBSVKFQWCAIAgCAm6AIQSgJYXNe0scWu5EGxCESSa1MuI0dNVXfWWc4XLpM5BG1yTz2G66KVepB9lmUqUGrvS3geTs2aaThSSOhLiIjIbnLuSf85BfQQvGKzbd9hhoScczfK/D+S7par3hM/wg8yev7JZbDptPZcq9rovGS/3vGGnUtvqB0On5I7NaGVeMst4vU9RQU9GyJs1K0PbIAQ69ydzz23K8CvVquWWe4zpQhbPE2Bc5sEBCgBCQUIIQkIAgCAuNgpKlCoLBAAgCAWQE2QBCCQgB13QFJ4WTwSQyase0tI9VeE3CSktqKzipxcXsPGMbLQVLqepblc3n95u5I9bBfRwnGrDNHeZ0Kj/SWjXV/E1tlaI7uto+MO+YJP8A2Kh3udWZLrriZJXyzPbBG0vldo1g+9sfloCrXjBZpaI561XIsu9+563DqYUdFDTtdmLG6u+87cn6r56vVdWo5ilDJCz2mkrE0A923PRAQgCEiyAhAEAQBAXGwUlShUFggCADfXZCGW05bICAgJQE6IACCQPqhDIO5CEnOxvD+/0hDLcdmsZP4j0P7LrwmI/FUu9j2mNWm5JOO1dWPMvpq8OfA6jn4jiHDK24Pnm2/Fe0q9FrMpK3W7aZuu9U4u73W+dnqeiwPDXUbZJ6lrRUynxAG+UdP1K8nG4lVZKMdiL04NtzltZ1FwG5O6kEKCQhAQBCSEAQBAEBcbBSVKFQWCAICQgCEEoCEAvdAEAQkIAdUICAISEBAQElAAgCAhAEAQBAXGwUlShUFggCAIAgF0BN0IF0JCAIQEJCkgFAAoJCAFACLaIQAhJeNrHXzyZLbeEm/wBFKRVtp6I+agsEAQBAXGwUlShUFggCAIAgCAIAgCAIAgBQAFCAUJCAICb3NygIKAm6AXQEIAgCAuNgpKlCoLBAEAQBAEAQBAEAQBAEAQBAEAQBAEAQBAEAQBAXGwUlShUFggCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgLjYKSosOiAWHRALDogFh0QCw6IBYdEAsOiAWHRALDogFh0QCw6IBYdEAsOiAWHRALDogFh0QCw6IBYdEAsOiAWHRALDogFh0QCw6ICVIP/Z" alt="SRH Logo" />
+  <h1>Sunrisers Hyderabad</h1>
+  <p>Orange Army - Dare to Dream</p>
+</header>
+
+<main id="players-grid">
+  <!-- Player cards will go here -->
+</main>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <button class="close-btn" id="closeModal">&times;</button>
+    <h2 id="modalName"></h2>
+    <div class="stat"><strong>Strike Rate:</strong> <span id="modalStrikeRate"></span></div>
+    <div class="stat"><strong>Matches Played:</strong> <span id="modalMatches"></span></div>
+    <div class="stat"><strong>Jersey Number:</strong> <span id="modalJersey"></span></div>
+    <div class="stat"><strong>Best Performance:</strong> <span id="modalBest"></span></div>
+  </div>
+</div>
+
+<script>
+  // Sample SRH players data
+  const players = [
+    {
+      name: "Kane Williamson",
+      role: "Batsman",
+      img: "https://www.cricbuzz.com/a/img/v1/192x192/i1/c241828/kane-williamson.jpg",
+      strikeRate: "137.9",
+      matches: "87",
+      jersey: "22",
+      best: "105* (65 balls)"
+    },
+    {
+      name: "Bhuvneshwar Kumar",
+      role: "Bowler",
+      img: "https://www.cricbuzz.com/a/img/v1/192x192/i1/c167127/bhuvneshwar-kumar.jpg",
+      strikeRate: "119.4",
+      matches: "110",
+      jersey: "15",
+      best: "4/19"
+    },
+    {
+      name: "Abhishek Sharma",
+      role: "All-Rounder",
+      img: "https://www.cricbuzz.com/a/img/v1/192x192/i1/c281019/abhishek-sharma.jpg",
+      strikeRate: "128.5",
+      matches: "35",
+      jersey: "30",
+      best: "63* (42 balls)"
+    },
+    {
+      name: "Nicholas Pooran",
+      role: "Batsman",
+      img: "https://www.cricbuzz.com/a/img/v1/192x192/i1/c281140/nicholas-pooran.jpg",
+      strikeRate: "150.6",
+      matches: "60",
+      jersey: "29",
+      best: "89 (45 balls)"
+    },
+    {
+      name: "Rashid Khan",
+      role: "Bowler",
+      img: "https://www.cricbuzz.com/a/img/v1/192x192/i1/c231405/rashid-khan.jpg",
+      strikeRate: "120.3",
+      matches: "75",
+      jersey: "19",
+      best: "5/20"
+    }
+  ];
+
+  const playersGrid = document.getElementById("players-grid");
+  const modal = document.getElementById("modal");
+  const closeModalBtn = document.getElementById("closeModal");
+
+  // Modal elements
+  const modalName = document.getElementById("modalName");
+  const modalStrikeRate = document.getElementById("modalStrikeRate");
+  const modalMatches = document.getElementById("modalMatches");
+  const modalJersey = document.getElementById("modalJersey");
+  const modalBest = document.getElementById("modalBest");
+
+  // Function to create player cards dynamically
+  function createPlayerCard(player) {
+    const card = document.createElement("div");
+    card.className = "player-card";
+    card.setAttribute("tabindex", "0"); // for keyboard focus
+
+    card.innerHTML = `
+      <img src="${player.img}" alt="${player.name}" />
+      <h3>${player.name}</h3>
+      <p>${player.role}</p>
+    `;
+
+    // Show modal on click
+    card.addEventListener("click", () => openModal(player));
+    // Show modal on keyboard Enter key
+    card.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openModal(player);
+      }
+    });
+
+    return card;
+  }
+
+  // Open modal and fill data
+  function openModal(player) {
+    modalName.textContent = player.name;
+    modalStrikeRate.textContent = player.strikeRate;
+    modalMatches.textContent = player.matches;
+    modalJersey.textContent = player.jersey;
+    modalBest.textContent = player.best;
+
+    modal.classList.add("active");
+  }
+
+  // Close modal
+  function closeModal() {
+    modal.classList.remove("active");
+  }
+
+  // Close modal on clicking close button
+  closeModalBtn.addEventListener("click", closeModal);
+
+  // Close modal on clicking outside modal content
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  // Close modal on Escape key
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.classList.contains("active")) {
+      closeModal();
+    }
+  });
+
+  // Render all player cards on page load
+  players.forEach(player => {
+    const card = createPlayerCard(player);
+    playersGrid.appendChild(card);
+  });
+</script>
+
+</body>
+</html>
