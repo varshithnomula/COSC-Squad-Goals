@@ -2,6 +2,8 @@
 
 A visually appealing, interactive one-page website showcasing the Sunrisers Hyderabad (SRH) cricket team and its star players. This project uses HTML, CSS, and JavaScript to display player cards in a grid, and clicking on each player card opens a modal with detailed stats.
 
+live link:https://varshithnomula.github.io/COSC-Squad-Goals/
+
 ---
 
 
